@@ -108,6 +108,7 @@ root_agent = SequentialAgent(
 Root sequential agent that:
 1. Orchestrates prompt generation
 2. Executes parallel analysis agents
-3. Produces final underwriting credit memo
+3. Risk Analysis Agent
+4. Produces final underwriting credit memo
 """
 )
