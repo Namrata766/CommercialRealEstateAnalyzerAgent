@@ -43,44 +43,17 @@ Return a single JSON object containing all extracted data and generated prompts.
 # 2. PARALLEL ANALYSIS AGENTS
 # ---------------------------------------------------------------------
 
-property_analysis_agent = LlmAgent(
-    name="PropertyAnalysisAgent",
-    model=MODEL,
-    instruction="""
-You will receive an object called `analysis_prompts`.
-
-Use ONLY the value of `property_analysis_prompt`
-as your analysis instruction.
-
-Produce property underwriting insights only.
-""",
-    output_key="property_analysis"
-)
-
-
-market_analysis_agent = LlmAgent(
-    name="MarketAnalysisAgent",
-    model=MODEL,
-    instruction="""
-You will receive an object called `analysis_prompts`.
-
-Use ONLY the value of `market_analysis_prompt`
-as your analysis instruction.
-
-Produce income stability and risk insights.
-""",
-    output_key="market_analysis"
-)
-
+from agents.subagents.property_agent.agent import property_agent
 from agents.subagents.financial_metrics_agent import financial_metrics_agent
 from agents.subagents.demographic_details_agent import demographic_details_agent
 from agents.subagents.regulatory_agent import property_regulatory_analyst_agent 
 from agents.subagents.risk_analysis_agent import risk_analysis_agent
+from agents.subagents.market_agent.agent import market_analysis_agent
  
 parallel_analysis_agent = ParallelAgent(
     name="ParallelAnalysisAgent",
     sub_agents=[
-        property_analysis_agent,
+        property_agent,
         market_analysis_agent,
         property_regulatory_analyst_agent,
         financial_metrics_agent,

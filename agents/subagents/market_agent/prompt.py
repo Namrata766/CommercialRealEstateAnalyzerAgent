@@ -1,53 +1,9 @@
-import os
-from dotenv import load_dotenv
-from google.adk.agents import LlmAgent
-# from google.adk.tools import tool
-from google.cloud import bigquery
-from google.adk.tools import FunctionTool, google_search
-
-load_dotenv()
-
-MODEL = os.getenv("MODEL", "gemini-3-pro-preview")
-
-
-# @tool
-# def bigquery_tool(query: str) -> str:
-def bigquery_query(query: str) -> str:
-  """
-  Executes a BigQuery SQL query and returns the result as a string.
-
-  Args:
-    query: A valid BigQuery SQL query string.
-
-  Returns:
-    A string representation of the query results, or an error message.
-  """
-  print(f"\n[BigQuery Tool] Attempting to execute query:\n{query}\n")
-  try:
-    client = bigquery.Client()
-    print("[BigQuery Tool] Successfully created BigQuery client.")
-    query_job = client.query(query)
-    results = query_job.result()
-    result_list = [dict(row) for row in results]
-    print(f"[BigQuery Tool] Query executed successfully. Found {len(result_list)} rows.")
-    # Convert results to a string format that's easy for the LLM to parse
-    return str(result_list)
-  except Exception as e:
-    print(f"❌ [BigQuery Tool] Connection/query failed: {e}")
-    return f"An error occurred while querying BigQuery: {e}"
-
-
-bigquery_tool = FunctionTool(
-    func=bigquery_query,
-)
+__all__ = ["AGENT_INSTRUCTIONS"]
 
 TABLE_FY2025 = "ccibt-hack25ww7-710.uc1Loan.fy2025_safmrs_revised"
 TABLE_FY2026 = "ccibt-hack25ww7-710.uc1Loan.fy2026_safmrs"
 
-market_analysis_agent = LlmAgent(
-    name="MarketAnalysisAgent",
-    model=MODEL,
-    instruction=f"""
+AGENT_INSTRUCTIONS = f"""
 You are a Commercial Real Estate Market Analyst. Your primary task is to use the `bigquery_query` tool to analyze market data from two BigQuery tables: `{TABLE_FY2025}` (for FY2025) and `{TABLE_FY2026}` (for FY2026).
 If you cannot find data in BigQuery, you will use the `google_search` tool as a fallback.
 
@@ -89,7 +45,4 @@ If you cannot find data in BigQuery, you will use the `google_search` tool as a 
     *   Synthesize the information from the search results into a market analysis report. The report should still contain the same information (average rents per BR type and inflation) as best as you can find it.
 
 Execute the necessary queries using the provided tools and present only the final, synthesized report as your output.
-""",
-    tools=[bigquery_tool, google_search],
-    output_key="market_analysis"
-)
+"""
