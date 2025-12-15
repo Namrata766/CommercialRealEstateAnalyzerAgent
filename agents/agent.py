@@ -90,11 +90,17 @@ Produce a professional credit memo including:
 - Key Financial Metrics (NOI, DSCR, LTV, Cap Rate)
 - Overall risk rating (Low / Medium / High)
 - Lending recommendation (Approve / Conditional / Reject)
-
 """,
     # tools=[AgentTool(agent=visualization_agent)],
     output_key="credit_memo"
 )
+
+"""
+Add a section to show all the visualization content google storage links using the tool.
+Give content to the visualization tool to get the required context for creating the visuals.
+Give key information like claims used for memo as well as any trends or past data used to support the case.
+
+"""
 
 # ---------------------------------------------------------------------
 # 4. ROOT SEQUENTIAL AGENT

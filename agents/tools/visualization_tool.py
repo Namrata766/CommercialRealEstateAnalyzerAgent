@@ -129,7 +129,7 @@ class VisualizationTool(BaseTool):
         """
         # store for signed url expiry usage in _upload_to_gcs
         self._expires_seconds = default_expires_seconds
-
+        load_dotenv()
         bucket_name = bucket_name or os.environ.get("GCS_BUCKET")
         visuals = []
         for idx, spec in enumerate(visual_spec):
@@ -181,3 +181,5 @@ class VisualizationTool(BaseTool):
             visuals.append(entry)
 
         return {"visuals": visuals}
+
+visualization_tool = VisualizationTool()
