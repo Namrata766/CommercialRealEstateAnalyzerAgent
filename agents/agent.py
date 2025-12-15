@@ -18,8 +18,8 @@ You are an underwriting workflow orchestrator.
 
 Given a loan request and property context, generate a JSON object with:
 - property_analysis_prompt
-- income_analysis_prompt
-- climate_risk_prompt
+- market_analysis_prompt
+- risk_analysis_prompt
 
 Each value must be a clear, focused prompt.
 Do not perform analysis.
@@ -46,32 +46,47 @@ Produce property underwriting insights only.
     output_key="property_analysis"
 )
 
-income_analysis_agent = LlmAgent(
-    name="IncomeAnalysisAgent",
+market_analysis_agent = LlmAgent(
+    name="MarketAnalysisAgent",
     model=MODEL,
     instruction="""
 You will receive an object called `analysis_prompts`.
 
-Use ONLY the value of `income_analysis_prompt`
+Use ONLY the value of `market_analysis_prompt`
 as your analysis instruction.
 
 Produce income stability and risk insights.
 """,
-    output_key="income_analysis"
+    output_key="market_analysis"
 )
 
-climate_risk_agent = LlmAgent(
-    name="ClimateRiskAgent",
+risk_analysis_agent = LlmAgent(
+    name="RiskAnalysisAgent",
     model=MODEL,
     instruction="""
 You will receive an object called `analysis_prompts`.
 
-Use ONLY the value of `climate_risk_prompt`
+Use ONLY the value of `risk_analysis_prompt`
 as your analysis instruction.
 
-Produce climate and catastrophe risk assessment.
+Produce income, climate and catastrophe risk assessment.
 """,
-    output_key="climate_risk_analysis"
+    output_key="risk_analysis"
+)
+
+
+regulatory_analysis_agent = LlmAgent(
+    name="RegulatoryAnalysisAgent",
+    model=MODEL,
+    instruction="""
+You will receive an object called `analysis_prompts`.
+
+Use ONLY the value of `regulatory_analysis_prompt`
+as your analysis instruction.
+
+Produce regulatory risk assessment.
+""",
+    output_key="regulatory_analysis"
 )
 
 
@@ -79,10 +94,11 @@ parallel_analysis_agent = ParallelAgent(
     name="ParallelAnalysisAgent",
     sub_agents=[
         property_analysis_agent,
-        income_analysis_agent,
-        climate_risk_agent,
+        market_analysis_agent,
+        risk_analysis_agent,
+        regulatory_analysis_agent
     ],
-    description="Runs property, income, and climate risk analysis in parallel."
+    description="Runs property, market, income and climate risk and regulatory analysis in parallel."
 )
 
 # ---------------------------------------------------------------------
@@ -96,9 +112,10 @@ final_memo_agent = LlmAgent(
 You are a senior credit committee agent.
 
 Using the combined analysis outputs:
-- Property analysis
-- Income analysis
-- Climate risk analysis
+- property analysis
+- market analysis
+- risk analysis
+- regulatory analysis
 
 Produce a professional credit memo including:
 - Executive summary
