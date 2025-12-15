@@ -16,14 +16,24 @@ prompt_orchestrator_agent = LlmAgent(
     instruction="""
 You are an underwriting workflow orchestrator.
 
-Given a loan request and property context, generate a JSON object with:
-- property_analysis_prompt
-- market_analysis_prompt
-- risk_analysis_prompt
-- regulatory_analysis_prompt
+Given a loan request and property context, extract key information and generate analysis prompts.
 
-Each value must be a clear, focused prompt.
-Do not perform analysis.
+1.  **Extract Key Data**: From the user's request, extract the following fields. If a value is not present, use `null`.
+    *   `property_address` (string)
+    *   `property_type` (string, e.g., "Multifamily", "Office")
+    *   `gross_rental_income` (float)
+    *   `operating_expenses` (float)
+    *   `purchase_price` (float)
+    *   `loan_amount` (float)
+    *   `annual_debt_service` (float)
+
+2.  **Generate Prompts**: Create clear, focused prompts for the following analysis areas.
+    *   `property_analysis_prompt`
+    *   `market_analysis_prompt`
+    *   `risk_analysis_prompt`
+    *   `regulatory_analysis_prompt`
+
+Return a single JSON object containing all extracted data and generated prompts. Do not perform the analysis yourself.
 """,
     output_key="analysis_prompts"
 )
@@ -62,30 +72,21 @@ Produce income stability and risk insights.
     output_key="market_analysis"
 )
 
-risk_analysis_agent = LlmAgent(
-    name="RiskAnalysisAgent",
-    model=MODEL,
-    instruction="""
-You will receive an object called `analysis_prompts`.
-
-Use ONLY the value of `risk_analysis_prompt`
-as your analysis instruction.
-
-Produce income, climate and catastrophe risk assessment.
-""",
-    output_key="risk_analysis"
-)
-
-from agents.subagents.regulatory_agent import property_regulatory_analyst_agent
+from agents.subagents.financial_metrics_agent import financial_metrics_agent
+from agents.subagents.demographic_details_agent import demographic_details_agent
+from agents.subagents.regulatory_agent import property_regulatory_analyst_agent 
+from agents.subagents.risk_analysis_agent import risk_analysis_agent
+ 
 parallel_analysis_agent = ParallelAgent(
     name="ParallelAnalysisAgent",
     sub_agents=[
         property_analysis_agent,
         market_analysis_agent,
-        risk_analysis_agent,
-        property_regulatory_analyst_agent
+        property_regulatory_analyst_agent,
+        financial_metrics_agent,
+        demographic_details_agent,
     ],
-    description="Runs property, market, income and climate risk and regulatory analysis in parallel."
+    description="Runs property, market, risk, regulatory, and financial analysis in parallel."
 )
 
 # ---------------------------------------------------------------------
@@ -101,13 +102,16 @@ You are a senior credit committee agent.
 Using the combined analysis outputs:
 - property analysis
 - market analysis
-- risk analysis
 - regulatory analysis
+- financial analysis
+- demographic analysis
+- risk and stress test analysis
 
 Produce a professional credit memo including:
 - Executive summary
 - Key strengths
 - Key risks
+- Key Financial Metrics (NOI, DSCR, LTV, Cap Rate)
 - Overall risk rating (Low / Medium / High)
 - Lending recommendation (Approve / Conditional / Reject)
 """,
@@ -123,6 +127,7 @@ root_agent = SequentialAgent(
     sub_agents=[
         prompt_orchestrator_agent,
         parallel_analysis_agent,
+        risk_analysis_agent,
         final_memo_agent,
     ],
     description="""
