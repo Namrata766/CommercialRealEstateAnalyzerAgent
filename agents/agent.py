@@ -20,6 +20,7 @@ Given a loan request and property context, generate a JSON object with:
 - property_analysis_prompt
 - market_analysis_prompt
 - risk_analysis_prompt
+- regulatory_analysis_prompt
 
 Each value must be a clear, focused prompt.
 Do not perform analysis.
@@ -45,6 +46,7 @@ Produce property underwriting insights only.
 """,
     output_key="property_analysis"
 )
+
 
 market_analysis_agent = LlmAgent(
     name="MarketAnalysisAgent",
