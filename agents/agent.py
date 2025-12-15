@@ -65,12 +65,12 @@ parallel_analysis_agent = ParallelAgent(
 # ---------------------------------------------------------------------
 # 3. FINAL CREDIT MEMO AGENT
 # ---------------------------------------------------------------------
-
+from google.adk.tools.agent_tool import AgentTool
 final_memo_agent = LlmAgent(
     name="FinalCreditMemoAgent",
     model=MODEL,
     instruction="""
-You are a senior credit committee agent.
+You are a senior credit committee agent responsible for synthesizing analysis into a final, professional credit memo.
 
 Using the combined analysis outputs:
 - property analysis
@@ -88,6 +88,7 @@ Produce a professional credit memo including:
 - Overall risk rating (Low / Medium / High)
 - Lending recommendation (Approve / Conditional / Reject)
 """,
+    # tools=[AgentTool(agent=visualization_agent)],
     output_key="credit_memo"
 )
 
