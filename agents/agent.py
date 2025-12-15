@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 from google.adk.agents import LlmAgent, ParallelAgent, SequentialAgent
+from datetime import date
 
 load_dotenv()
 
@@ -49,6 +50,7 @@ from agents.subagents.demographic_details_agent import demographic_details_agent
 from agents.subagents.regulatory_agent import property_regulatory_analyst_agent 
 from agents.subagents.risk_analysis_agent import risk_analysis_agent
 from agents.subagents.market_agent.agent import market_analysis_agent
+from agents.subagents.visulization_agent import visualization_agent
  
 parallel_analysis_agent = ParallelAgent(
     name="ParallelAnalysisAgent",
@@ -66,12 +68,13 @@ parallel_analysis_agent = ParallelAgent(
 # 3. FINAL CREDIT MEMO AGENT
 # ---------------------------------------------------------------------
 from google.adk.tools.agent_tool import AgentTool
+today = date.today().strftime("%B %d, %Y")
 final_memo_agent = LlmAgent(
     name="FinalCreditMemoAgent",
     model=MODEL,
-    instruction="""
+    instruction=f"""
 You are a senior credit committee agent responsible for synthesizing analysis into a final, professional credit memo.
-
+Date of document is {today}.
 Using the combined analysis outputs:
 - property analysis
 - market analysis
@@ -83,10 +86,11 @@ Using the combined analysis outputs:
 Produce a professional credit memo including:
 - Executive summary
 - Key strengths
-- Key risks
+- Key risks (colateral evaluation)
 - Key Financial Metrics (NOI, DSCR, LTV, Cap Rate)
 - Overall risk rating (Low / Medium / High)
 - Lending recommendation (Approve / Conditional / Reject)
+
 """,
     # tools=[AgentTool(agent=visualization_agent)],
     output_key="credit_memo"
