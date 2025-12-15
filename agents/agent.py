@@ -76,29 +76,14 @@ Produce income, climate and catastrophe risk assessment.
     output_key="risk_analysis"
 )
 
-
-regulatory_analysis_agent = LlmAgent(
-    name="RegulatoryAnalysisAgent",
-    model=MODEL,
-    instruction="""
-You will receive an object called `analysis_prompts`.
-
-Use ONLY the value of `regulatory_analysis_prompt`
-as your analysis instruction.
-
-Produce regulatory risk assessment.
-""",
-    output_key="regulatory_analysis"
-)
-
-
+from agents.subagents.regulatory_agent import property_regulatory_analyst_agent
 parallel_analysis_agent = ParallelAgent(
     name="ParallelAnalysisAgent",
     sub_agents=[
         property_analysis_agent,
         market_analysis_agent,
         risk_analysis_agent,
-        regulatory_analysis_agent
+        property_regulatory_analyst_agent
     ],
     description="Runs property, market, income and climate risk and regulatory analysis in parallel."
 )
