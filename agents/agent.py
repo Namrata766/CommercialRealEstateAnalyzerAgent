@@ -5,7 +5,7 @@ from datetime import date
 
 load_dotenv()
 
-MODEL = os.getenv("MODEL", "gemini-3-pro-preview")
+MODEL = os.getenv("MODEL", "gemini-2.5-pro")
 
 # ---------------------------------------------------------------------
 # 1. PROMPT ORCHESTRATOR AGENT
