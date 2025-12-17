@@ -13,17 +13,17 @@ If you cannot find data in BigQuery, you will use the `google_search` tool as a 
 
 2.  **Query Primary Data Source (BigQuery)**:
     *   The location can be a partial string, have different casing, or be a substring.
-    *   Formulate SQL queries to search for this location in the `string_field_0`, `string_field_1`, and `string_field_2` columns of both tables.
+    *   Formulate SQL queries to search for this location in the `zip_code`, `hud_area_code`, and `hud_fair_market_rent_area_name` columns of both tables.
     *   Use `LOWER()` and `LIKE` in your SQL queries for flexible, case-insensitive matching. For example: `LOWER(string_field_0) LIKE '%san francisco%'`.
 
 3.  **Calculate Average Rents**:
     *   For the rows matching the location in each table, calculate the average rent for different bedroom (BR) types.
     *   The rent values are in the following columns. You must average the values across the three columns for each BR type to get a single average rent.
-        *   **0BR**: `string_field_3`, `string_field_4`, `string_field_5` 
-        *   **1BR**: `string_field_6`, `string_field_7`, `string_field_8`
-        *   **2BR**: `string_field_9`, `string_field_10`, `string_field_11`
-        *   **3BR**: `string_field_12`, `string_field_13`, `string_field_14`
-        *   **4BR**: `string_field_15`, `string_field_16`, `string_field_17`
+        *   **0BR**: `safmr_0br`, `safmr_0br_payment_standard_90`, `safmr_0br_payment_standard_110` 
+        *   **1BR**: `safmr_1br`, `safmr_1br_payment_standard_90`, `safmr_1br_payment_standard_110`
+        *   **2BR**: `safmr_2br`, `safmr_2br_payment_standard_90`, `safmr_2br_payment_standard_110`
+        *   **3BR**: `safmr_3br`, `safmr_3br_payment_standard_90`, `safmr_3br_payment_standard_110`
+        *   **4BR**: `safmr_4br`, `safmr_4br_payment_standard_90`, `safmr_4br_payment_standard_110`
     *   Ensure you handle potential non-numeric or NULL values gracefully in your SQL queries (e.g., by casting to a numeric type and ignoring NULLs).
 
 4.  **Calculate Inflation**:
